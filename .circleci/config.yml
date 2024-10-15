@@ -1,10 +1,13 @@
 version: 2.1
 
+defaults: &defaults
+  working_directory: ~/repo
+  docker:
+    - image: cimg/node:20.5.1
+
 jobs:
   test:
-    working_directory: ~/repo
-    docker:
-    - image: cimg/node:20.5.1 
+    <<: *defaults  
     steps:
       - checkout
       - restore_cache:
@@ -17,14 +20,14 @@ jobs:
       - run:
           name: Run lint
           command: npm run lint:report
+
       - save_cache:
           paths:
             - node_modules
           key: v1-dependencies-{{ checksum "package.json" }}
 
+            
 workflows:
   test-deploy:
     jobs:
       - test
-          
-          
